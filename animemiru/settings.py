@@ -6,7 +6,7 @@ SECRET_KEY = 'django-insecure-op3!&w5-py4i7x70#=tmqtia)0l=givkajw4s^g%f0he!t(3=)
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -15,7 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app.urls'
+    'app'
 ]
 
 MIDDLEWARE = [
@@ -27,6 +27,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middleware.TrialMiddleware'
 ]
 
 ROOT_URLCONF = 'animemiru.urls'
@@ -78,6 +79,19 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+# settings.py
+
+LOGIN_URL = '/login/'  # Gantilah dengan URL yang sesuai dengan halaman login kamu
+LOGIN_REDIRECT_URL = '/'  # Redirect setelah login
+LOGOUT_REDIRECT_URL = '/login/'  # Redirect setelah logout
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Memuat variabel dari .env
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
 
 STATIC_URL = '/static/'
 import os

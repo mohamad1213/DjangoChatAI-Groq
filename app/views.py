@@ -1,142 +1,120 @@
-from django.shortcuts import render
-import requests
-from datetime import datetime
-import math
 import os
-from dotenv import load_dotenv
-load_dotenv()
-API_KEY = os.getenv("API_KEY")
-import json
-import requests
-from datetime import datetime
 from django.shortcuts import render
-from urllib.parse import quote_plus
-def index(request):
-    query = request.GET.get('search_query', '')  # Get search query from the URL
-    search_results = []
+from .models import AIResponse
+from .forms import AIForm
+from groq import Groq
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+import datetime
+from django.utils.timezone import now
+from .forms import RegisterForm
 
-    if query:
-        # URL-encode the query to handle special characters
-        encoded_query = quote_plus(query)
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('ai_page')
 
-        # Make the API request to Jikan search endpoint
-        response = requests.get(f'https://api.jikan.moe/v4/anime?q={encoded_query}&limit=10')  # You can adjust the limit
-        print(f"Request URL: https://api.jikan.moe/v4/anime?q={encoded_query}&limit=10")
-        if response.status_code == 200:
-            search_results = response.json().get('data', [])
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('ai_page')
+    else:
+        form = RegisterForm()
 
+    return render(request, 'register.html', {'form': form})
+
+def user_login(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Login berhasil!")
+            return redirect("generate_ai")  # Redirect ke halaman setelah login
         else:
-            print(f"Error fetching search results: {response.status_code}")
-    def get_season():
-        month = datetime.now().month
-        if 4 <= month <= 6:
-            return "spring"
-        elif 7 <= month <= 9:
-            return "summer"
-        elif 10 <= month <= 12:
-            return "fall"
-        else:
-            return "winter"
-
-    current_year = datetime.now().year
-
-    # Inisialisasi variabel dengan nilai default
-    airing_now_data = {}
-    top_anime_data = {}
-    popular_anime_data = {}
-    anime_recommendations = []
-
-    # Fetch data anime airing sekarang
-    response = requests.get(f'https://api.jikan.moe/v4/seasons/{current_year}/{get_season()}')
-    if response.status_code == 200:
-        airing_now_data = response.json()
-    else:
-        print(f"Error fetching airing now data: {response.status_code}")
-
-    # Fetch data top anime
-    response = requests.get('https://api.jikan.moe/v4/top/anime')
-    if response.status_code == 200:
-        top_anime_data = response.json()
-    else:
-        print(f"Error fetching top anime data: {response.status_code}")
-
-    # Fetch data popular anime
-    response = requests.get('https://api.jikan.moe/v4/top/anime?filter=bypopularity')
-    if response.status_code == 200:
-        popular_anime_data = response.json()
-    else:
-        print(f"Error fetching popular anime data: {response.status_code}")
-
-    # Fetch data anime recommendations (misalnya, rekomendasi untuk anime dengan id tertentu)
-    anime_id = 5114  # Contoh ID anime, ganti sesuai dengan ID anime yang relevan
-    response = requests.get(f'https://api.jikan.moe/v4/anime/{anime_id}/recommendations')
-    if response.status_code == 200:
-        anime_recommendations = response.json().get('data', [])
-    else:
-        print(f"Error fetching anime recommendations data: {response.status_code}")
-
-    context = {
-        'airing_now_data': airing_now_data.get('data', []),
-        'top_anime_data': top_anime_data.get('data', []),
-        'popular_anime_data': popular_anime_data.get('data', []),
-        'anime_recommendations': anime_recommendations,
-        'search_results': search_results
-    }
-    return render(request, 'index.html', context)
-
-def getAnimeRecommendations(anime_id):
-    try:
-        response = requests.get(f'https://api.jikan.moe/v4/anime/{anime_id}/recommendations')
-        if response.status_code == 200:
-            recommendations_data = response.json().get('data', [])
-            return recommendations_data
-        else:
-            print(f"Error fetching recommendations: {response.status_code}")
-            return []
-    except Exception as e:
-        print(f"Error fetching recommendations: {e}")
-        return []
-
-
-
-
-def index_two(request, anime_id):
-    # Menggunakan Jikan API untuk mendapatkan data anime
-    response = requests.get(f'https://api.jikan.moe/v4/anime/{anime_id}')
-
-    anime_data = {}  # Inisialisasi default anime_data sebagai dictionary kosong
-
-    if response.status_code == 200:
-        anime_data = response.json().get('data', {})
-        recommendations_data = getAnimeRecommendations(anime_id)
-        
-        # Get the related anime data
-    else:
-        print(f"Error: {response.status_code}")
+            messages.error(request, "Username atau password salah.")
     
-    # Error handling untuk memastikan bahwa 'anime_data' tidak kosong
-    if not anime_data:
-        return render(request, 'error.html', {'message': 'Anime data not found'})
+    return render(request, "login.html")
 
-    start_date = datetime.fromisoformat(anime_data['aired']['from'])
-    end_date = datetime.fromisoformat(anime_data['aired']['to'])
-    context = {
-        'anime_data': anime_data,
-        'relation_length': len(anime_data.get('related', [])),
-        'start_date':start_date,
-        'recommendation': recommendations_data
-        
-    }
-    return render(request, 'anime-view.html', context)
+def user_logout(request):
+    logout(request)
+    messages.success(request, "Anda telah logout.")
+    return redirect("login")
+from dotenv import load_dotenv
 
+load_dotenv()  # Memuat variabel dari .env
 
-# def index_three(request, search_query):
-#     from django.http import JsonResponse
-#     headers = {'X-MAL-CLIENT-ID': API_KEY}
-#     response = requests.get(f'https://api.myanimelist.net/v2/anime?q={search_query}&fields=mean,media_type,num_episodes,start_date,end_date', headers=headers)
-#     if response.status_code == 200:
-#         data = response.json()
-#         return JsonResponse(data)
-#     else:
-#         print(f"Error: {response.status_code}")
-            
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
+def dashboard(request):
+    return render(request, 'index.html')
+def get_trial_limit(request):
+    trial_limit = 3  # Maksimal request gratis
+    trial_session_key = "ai_trial_count"
+    
+    if trial_session_key not in request.session:
+        request.session[trial_session_key] = 0
+        request.session["trial_start"] = str(now().date())  # Simpan tanggal mulai trial
+
+    trial_count = request.session[trial_session_key]
+
+    # Periksa apakah trial masih berlaku (misalnya 3 hari)
+    trial_start_date = datetime.datetime.strptime(request.session["trial_start"], "%Y-%m-%d").date()
+    trial_days_limit = 3  # 3 hari free trial
+    if (now().date() - trial_start_date).days > trial_days_limit:
+        trial_count = trial_limit  # Paksa pengguna login setelah 3 hari
+
+    return trial_count, trial_limit
+def ai_view(request):
+    response_text = ""
+    trial_count, trial_limit = get_trial_limit(request)
+
+    # Jika pengguna belum login dan sudah mencapai batas trial, arahkan ke login
+    if not request.user.is_authenticated and trial_count >= trial_limit:
+        return redirect("login")
+
+    if request.method == "POST":
+        form = AIForm(request.POST)
+        if form.is_valid():
+            prompt = form.cleaned_data['prompt']
+            chat_completion = client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model="llama-3.3-70b-versatile",
+                stream=False,
+            )
+            response_text = chat_completion.choices[0].message.content
+
+            # Simpan hasil ke database jika pengguna login
+            if request.user.is_authenticated:
+                AIResponse.objects.create(user=request.user, prompt=prompt, response=response_text)
+            else:
+                request.session["ai_trial_count"] += 1  # Tambah hitungan trial
+
+    else:
+        form = AIForm()
+
+    return render(request, "ai_page.html", {"form": form, "response": response_text, "trial_limit": trial_count >= trial_limit})
+
+@login_required
+def ai_generate(request):
+    response_text = ""
+    if request.method == 'POST':
+        form = AIForm(request.POST)
+        if form.is_valid():
+            prompt = form.cleaned_data['prompt']
+            chat_completion = client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model="llama-3.3-70b-versatile",
+                stream=False,
+            )
+            response_text = chat_completion.choices[0].message.content
+            AIResponse.objects.create(user=request.user,prompt=prompt, response=response_text)
+    else:
+        form = AIForm()
+    return render(request, 'chat.html', {'form': form, 'response': response_text})

@@ -1,206 +1,273 @@
-<html>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-<head>
-    {% load static %}
-    <title>
-        AnimaSuki
-    </title>
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static " ico\apple-touch-icon.png" %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static " ico\favicon-32x32.png" %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static " ico\favicon-16x16.png" %}">
-    <link rel="manifest" href="{% static " ico\site.webmanifest" %}">
-    <link rel="stylesheet" href="{% static 'css/index.css'%}">
+<head><!-- Site made with Mobirise Website Builder v5.1.4, https://mobirise.com -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="generator" content="Mobirise v5.1.4, mobirise.com">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1">
+    <link rel="shortcut icon" href="{% static 'assets24/images/logo.png' %}" type="image/x-icon">
+    <title>Strak | AI</title>
+    <link rel="stylesheet" href="{% static 'assets24/css/critical.css' %}" type="text/css">
+    <link rel="preload" href="{% static 'assets24/css/main.css' %}" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="{% static 'assets24/css/main.css' %}">
+    </noscript>
+    <link rel="preload"
+        href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&amp;display=swap"
+        as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap">
+    </noscript>
 </head>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Mochiy+Pop+One&display=swap"
-    rel="stylesheet">
 
-<body>
-    <center>
-        <div id="navbar">
-            <a href={% url 'home' %}><span id="name-header"><span style="color: #ffd166;">Anime</span>Suki</span></a>
-            <form method="get" action="{% url 'home' %}">
-                <input id="input-box" name="search_query" placeholder="Search Anime"
-                    value="{{ request.GET.search_query }}">
-                <button id="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </form>
-        </div>
-        {% if search_results %}
-        <div class="header-and-buttons">
-            <h1 id="currently-airing-header"><i class="fa-solid fa-bars-progress"
-                    style="color: lime;"></i>&nbsp;&nbsp;THIS
-                SEASON</h1>
-            <div class="scroll-buttons">
-                <button class="scroll-buttons" id="previous-airing"><i class="fa-solid fa-arrow-left"></i></button>
-                <button class="scroll-buttons" id="next-airing"><i class="fa-solid fa-arrow-right"></i></button>
+<body><!-- Google Tag Manager--><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PFK425"
+            height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager -->
+    <section class="menu menu6 cid-u31fZceR0J" once="menu" id="menu06-2h">
+        <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg top-nav">
+            <div class="container-fluid">
+                <div class="navbar-brand"><span class="navbar-logo"><a href="https://mobirise.com">
+                            <picture>
+                                <source srcset="{% static 'assets24/images/logo.png' %}" type="image/png"><img
+                                    src="{% static 'assets24/images/logo.png' %}" alt="Mobirise" style="height: 3rem;">
+                            </picture>
+                        </a></span><span class="navbar-caption-wrap"><a
+                            class="navbar-caption text-black text-primary display-4" href="https://mobirise.com">Stark
+                            AI</a></span></div><input id="menu-toggle" type="checkbox"> <label
+                    class="menu-button-container" for="menu-toggle">
+                    <div class="menu-button"></div>
+                </label>
+                <ul class="menu" id="menu-collapser">
+                    <li>
+                    {% if user.is_authenticated %}
+                    <a class="btn btn-secondary display-4" href="{% url 'logout' %}">LOGOUT</a>
+                    {% else %}
+                    <a class="btn btn-secondary display-4" href="{% url 'tryai' %}">TRY AI</a>
+                    <a class="btn btn-primary display-4" href="{% url 'login' %}">LOGIN</a>
+                    {% endif %}
+                    </li>
+                </ul>
             </div>
-        </div>
-        <div id="airing-now-container">
-            { {% for anime in search_results %}
-            <a href="anime/id={{ anime.mal_id }}" class="anime-card-links">
-                <div class="anime-cards">
-                    <img src="{{ anime.images.jpg.image_url }}" class="image"
-                        alt="{{ anime.title }}">
-                    <p class="anime-title">{{ anime.title }}</p>
-                    <table class="airing-now-details-table">
-                        <tr>
-                            <td>
-                                <i class="fa-solid fa-star" style="color: gold"></i>&nbsp;
-                                {{ anime.score|default:"N/A" }}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </a>
-            {% empty %}
-            <p>No airing anime data available.</p>
-            {% endfor %}
-        </div>
-        {% else %}
-        {% if request.GET.search_query %}
-        <p>No results found for "{{ request.GET.search_query }}"</p>
-        {% endif %}
-        {% endif %}
-        <div id="container">
-        </div>
-
-        <div id="homepage-div">
-            <div class="header-and-buttons">
-                <h1 id="currently-airing-header"><i class="fa-solid fa-bars-progress"
-                        style="color: lime;"></i>&nbsp;&nbsp;THIS
-                    SEASON</h1>
-                <div class="scroll-buttons">
-                    <button class="scroll-buttons" id="previous-airing"><i class="fa-solid fa-arrow-left"></i></button>
-                    <button class="scroll-buttons" id="next-airing"><i class="fa-solid fa-arrow-right"></i></button>
+        </nav>
+    </section><!-- The Modal -->
+    <section class="header7 cid-tJTn4xFSbl" id="header07-6">
+        <div class="pt"></div>
+        <div class="mbr-overlay" style="opacity: 0.6; background-color: rgb(255, 255, 255);"></div>
+        <div class="align-center container">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <p class="mbr-section-title mb-4 display-1 mbr-bold">Create awesome websites in seconds</p>
+                    <p class="mbr-text mb-4 display-7">wiith AI. Publish anywhere.</p>
+                    <div class="mbr-section-btn mt-4"><a class="btn btn-primary display-7"
+                            href="https://mobirise.com/mobirise-free-win.zip">Download for Windows</a> <a
+                            class="btn btn-secondary display-7"
+                            href="https://mobirise.com/mobirise-free-mac.zip">Download for Mac</a></div>
                 </div>
             </div>
-            <div id="airing-now-container">
-                {% for airing_now_anime in airing_now_data %}
-                <a href="anime/id={{ airing_now_anime.mal_id }}" class="anime-card-links">
-                    <div class="anime-cards">
-                        <img src="{{ airing_now_anime.images.jpg.image_url }}" class="image"
-                            alt="{{ airing_now_anime.title }}">
-                        <p class="anime-title">{{ airing_now_anime.title }}</p>
-                        <table class="airing-now-details-table">
-                            <tr>
-                                <td>
-                                    <i class="fa-solid fa-star" style="color: gold"></i>&nbsp;
-                                    {{ airing_now_anime.score|default:"N/A" }}
-                                </td>
-                            </tr>
-                        </table>
+        </div>
+    </section>
+    <section class="header1 cid-u31gX8d97y">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg col-md-12">
+                    <h2 class="mbr-section-title display-2 mbr-bold">Make a website without coding</h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-12 col-lg-8 image-wrapper"><video class="lozad" autoplay="" loop="" muted=""
+                        playsinline="" poster="{% static 'assets24/images/mobirise-adding-blocks.webp' %}">
+                        <source data-src="{% static 'assets24/images/mobirise-adding-blocks.mp4' %}" type="video/mp4">
+                    </video></div>
+                <div class="col-12 col-lg col-md-12">
+                    <div class="text-wrapper">
+                        <p class="mbr-text mb-3 display-7">Drag pre-made blocks to create website pages, then replace
+                            content with your own, and voilà—your website is ready!</p>
+                        <p class="mbr-text display-7">All necessary website elements, including menus, galleries,
+                            sliders, contact forms, and more, are included.</p>
+                        <div class="mbr-section-btn"><a class="btn btn-primary display-7"
+                                href="https://mobirise.com/mobirise-free-win.zip">For Win </a><a
+                                class="btn btn-secondary display-7"
+                                href="https://mobirise.com/mobirise-free-mac.zip">For Mac</a></div>
                     </div>
-                </a>
-                {% empty %}
-                <p>No airing anime data available.</p>
-                {% endfor %}
-            </div>
-
-            <div class="header-and-buttons">
-                <h1 id="popular-anime-header"><i class="fa-solid fa-fire" style="color: red"></i>&nbsp;&nbsp;POPULAR
-                    ANIME
-                </h1>
-                <div class="scroll-buttons">
-                    <button class="scroll-buttons" id="previous-popular-anime"><i
-                            class="fa-solid fa-arrow-left"></i></button>
-                    <button class="scroll-buttons" id="next-popular-anime"><i
-                            class="fa-solid fa-arrow-right"></i></button>
                 </div>
-            </div>
-            <div id="popular-anime-container">
-                {% for popular_anime in popular_anime_data %}
-                <a href="anime/id={{ popular_anime.mal_id }}" class="anime-card-links">
-                    <div class="anime-cards">
-                        <img src="{{ popular_anime.images.jpg.image_url }}" class="image"
-                            alt="{{ popular_anime.title }}">
-                        <p class="anime-title">{{ popular_anime.title }}</p>
-                        <table class="airing-now-details-table">
-                            <tr>
-                                <td>
-                                    <i class="fa-solid fa-star" style="color: gold"></i>&nbsp;
-                                    {{ popular_anime.score|default:"N/A" }}
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </a>
-                {% empty %}
-                <p>No popular anime data available.</p>
-                {% endfor %}
-            </div>
-            <div class="header-and-buttons
-                <h1 id=" top-anime-header"><i class="fa-solid fa-ranking-star" style="color: gold;"></i>&nbsp;&nbsp;TOP
-                ANIME
-                </h1>
-                <div class="scroll-buttons">
-                    <button class="scroll-buttons" id="previous-top-anime"><i
-                            class="fa-solid fa-arrow-left"></i></button>
-                    <button class="scroll-buttons" id="next-top-anime"><i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-            </div>
-            <div id="top-anime-container">
-                {% for top_anime in top_anime_data %}
-                <a href="anime/id={{ top_anime.mal_id }}" class="anime-card-links">
-                    <div class="anime-cards">
-                        <img src="{{ top_anime.images.jpg.image_url }}" class="image" alt="{{ top_anime.title }}">
-                        <p class="anime-title">{{ top_anime.title }}</p>
-                        <table class="airing-now-details-table">
-                            <tr>
-                                <td>
-                                    <i class="fa-solid fa-star" style="color: gold"></i>&nbsp;
-                                    {{ top_anime.score|default:"N/A" }}
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </a>
-                {% empty %}
-                <p>No top anime data available.</p>
-                {% endfor %}
-            </div>
-            <div class="header-and-buttons">
-                <h1 id="anime-movie-header"><i class="fa-solid fa-film" style="color: purple;"></i>&nbsp;&nbsp;TOP
-                    RECOMMENDATION
-                    ANIME
-                </h1>
-                <div class="scroll-buttons">
-                    <button class="scroll-buttons" id="previous-anime-movie"><i
-                            class="fa-solid fa-arrow-left"></i></button>
-                    <button class="scroll-buttons" id="next-anime-movie"><i
-                            class="fa-solid fa-arrow-right"></i></button>
-                </div>
-            </div>
-            <div id="anime-movie-container">
-                {% for recommendation in anime_recommendations %}
-                <a href="anime/id={{ recommendation.entry.mal_id }}" class="anime-card-links">
-                    <div class="anime-cards">
-                        <img src="{{ recommendation.entry.images.jpg.image_url }}" class="image"
-                            alt="{{ recommendation.entry.title }}">
-                        <p class="anime-title">{{ recommendation.entry.title }}</p>
-                        <table class="airing-now-details-table">
-                            <tr>
-                                <td>
-                                    <i class="fa-solid fa-star" style="color: gold"></i>&nbsp;
-                                    {{ recommendation.score|default:"N/A" }}
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </a>
-                {% empty %}
-                <p>No anime recommendations available.</p>
-                {% endfor %}
             </div>
         </div>
-    </center>
+    </section>
+    <section class="header1 cid-u3q9IQ6Q7S">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg col-md-12">
+                    <h2 class="mbr-section-title display-2 mbr-bold">Customize your site visually</h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-12 col-lg-8 image-wrapper"><video class="lozad" autoplay="" loop="" muted=""
+                        playsinline="" poster="{% static 'assets24/images/mobirise-block-parameters.webp' %}">
+                        <source src="{% static 'assets24/images/mobirise-block-parameters.webp' %}" type="video/webp">
+                        <source src="{% static 'assets24/images/mobirise-block-parameters.mp4' %}" type="video/mp4">
+                    </video></div>
+                <div class="col-12 col-lg col-md-12">
+                    <div class="text-wrapper">
+                        <p class="mbr-text mb-3 display-7">Edit the content of each block just like you would in a
+                            regular text editor. Click on media elements to replace them with your own images, videos,
+                            or icons.</p>
+                        <p class="mbr-text display-7">Adjust options using the Parameters panel accessed through the
+                            blue 'gear' button.</p>
+                        <div class="mbr-section-btn"><a class="btn btn-primary display-7"
+                                href="https://mobirise.com/mobirise-free-win.zip">For Win</a> <a
+                                class="btn btn-secondary display-7"
+                                href="https://mobirise.com/mobirise-free-mac.zip">For Mac</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="header1 cid-u31gX8d97y">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg col-md-12">
+                    <h2 class="mbr-section-title display-2 mbr-bold">Edit locally and publish wherever</h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-12 col-lg-8 image-wrapper"><video class="lozad" autoplay="" loop="" muted=""
+                        playsinline="" poster="{% static 'assets24/images/mobirise-publish-wherever.webp' %}">
+                        <source data-src="{% static 'assets24/images/mobirise-publish-wherever.mp4' %}"
+                            type="video/mp4">
+                    </video></div>
+                <div class="col-12 col-lg col-md-12">
+                    <div class="text-wrapper">
+                        <p class="mbr-text mb-3 display-7">Publish your website to your hosting, for free on
+                            *.mobirisesite.com, or connect a custom domain. Save a draft to a local folder.</p>
+                        <p class="mbr-text display-7">Don't be a hostage to just one platform or service provider. Your
+                            site is yours; you have total control over it.</p>
+                        <div class="mbr-section-btn"><a class="btn btn-secondary display-7"
+                                href="https://mobirise.com/mobirise-free-win.zip">For Win </a><a
+                                class="btn btn-primary display-7" href="https://mobirise.com/mobirise-free-mac.zip">For
+                                Mac</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="header1 cid-u31olpS0jw">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg col-md-12">
+                    <h2 class="mbr-section-title display-2 mbr-bold">Build a mobile-friendly site</h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-12 col-lg-8 image-wrapper"><video class="lozad" autoplay="" loop="" muted=""
+                        playsinline="" poster="{% static 'assets24/images/mobirise-responsive-sites.webp' %}">
+                        <source src="{% static 'assets24/images/mobirise-responsive-sites.mp4' %}" type="video/mp4">
+                    </video></div>
+                <div class="col-12 col-lg col-md-12">
+                    <div class="text-wrapper">
+                        <p class="mbr-text mb-3 display-7">Make it easy for your customers to access your services on
+                            their mobile devices.</p>
+                        <p class="mbr-text display-7">Websites created with this website builder app are mobile-friendly
+                            by default. Google favors mobile-friendly sites, helping improve your ranking.</p>
+                        <div class="mbr-section-btn"><a class="btn btn-primary display-7"
+                                href="https://mobirise.com/mobirise-free-win.zip">For Win </a><a
+                                class="btn btn-secondary display-7"
+                                href="https://mobirise.com/mobirise-free-mac.zip">For Mac</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="header1 cid-u31F3ur5RZ">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg col-md-12">
+                    <h2 class="mbr-section-title display-2 mbr-bold">View and edit website code</h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-12 col-lg-8 image-wrapper"><video class="lozad" autoplay="" loop="" muted=""
+                        playsinline="" poster="{% static 'assets24/images/mobirise-code-editor.webp' %}">
+                        <source data-src="{% static 'assets24/images/mobirise-code-editor.m4v" type="video/mp4">
+                    </video></div>
+                <div class="col-12 col-lg col-md-12">
+                    <div class="text-wrapper">
+                        <p class="mbr-text mb-3 display-7">If your website requires deeper customization, use the Code
+                            Editor extension.</p>
+                        <p class="mbr-text display-7">Code HTML/CSS of your website manually, add external plugins, and
+                            create your own HTML blocks from scratch.</p>
+                        <div class="mbr-section-btn"><a class="btn btn-success display-7"
+                                href="https://mobirise.com/extensions/code-editor/">Learn how</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="footer4 cid-u38myUsBDr" once="footers">
+        <div class="mbr-overlay" style="opacity: 0.6; background-color: rgb(0, 0, 0);"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-6 col-lg-4">
+                    <div class="media-wrap col-md-6 col-12"><a href="https://mobirise.com/" aria-label="Mobirise"><img
+                                src="{% static 'assets24/images/logo.png' %}" alt=""></a></div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <ul class="list display-4">
+                        <li class="mbr-text item-wrap"><a href="https://mobirise.com/about/" class="text-primary">About
+                                Mobirise</a></li>
+                        <li class="mbr-text item-wrap"><a href="https://mobirise.com/help/" class="text-primary">Help
+                                Center</a></li>
+                        <li class="mbr-text item-wrap"><a href="http://forums.mobirise.com/"
+                                class="text-primary">Forums</a></li>
+                        <li class="mbr-text item-wrap"><a href="mailto:support@mobirise.com"
+                                class="text-primary">support@mobirise.com</a></li>
+                        <li class="mbr-text">
+                            <p class="mbr-text display-4 mb-0 mt-3 mt-md-0">Flight Forum 40, 5657 DB Eindhoven,
+                                Netherlands</p>
+                        </li>
+                        <li class="mbr-text">
+                            <p class="mbr-text display-4">Updated&nbsp;<time class="mbr-text display-4"
+                                    itemprop="dateModified" datetime="2024-04-16T14:54:17.280Z">2024-4-16</time></p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <ul class="list display-4">
+                        <li class="mbr-text item-wrap"><a href="https://mobirise.com/bootstrap-builder/"
+                                class="text-primary">Bootstrap Builder</a></li>
+                        <li class="mbr-text item-wrap"><a href="https://mobirise.com/builder/ai-website-builder.html"
+                                class="text-primary">AI Website Builder</a></li>
+                        <li class="mbr-text item-wrap"><a href="https://mobirise.com/website-design-software.html"
+                                class="text-primary">Website Design Software</a></li>
+                        <li class="mbr-text item-wrap"><a href="https://mobirise.com/offline-website-builder.html"
+                                class="text-primary">Offline Website Builder</a></li>
+                        <li class="mbr-text item-wrap"><a href="https://mobirise.com/html-builder.html"
+                                class="text-primary">HTML Builder</a></li>
+                        <li class="mbr-text item-wrap"><a href="https://mobirise.com/website-maker.html"
+                                class="text-primary">Website Maker</a></li>
+                        <li class="mbr-text item-wrap"><a href="https://chat.openai.com/g/g-NGLQJphpC"
+                                class="text-primary">GPT Website Builder</a></li>
+                        <li class="mbr-text item-wrap"><a href="https://chat.openai.com/g/g-yg5WelQdV"
+                                class="text-primary">AI Website Builder</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row mbr-white">
+                <div class="col-12 mt-3">
+                    <hr>
+                </div>
+                <div class="copyright col-12 mt-3">
+                    <p class="mbr-text1 mb-0 display-4">Mobirise® is a registered trademark. © 2024 Mobirise <a
+                            href="https://mobirise.com" class="text-primary">Website Builder Software</a> - All Rights
+                        Reserved. <a href="https://mobirise.com/terms.html" class="text-primary">Terms</a>, <a
+                            href="https://mobirise.com/privacy.html" class="text-primary">Privacy</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript" src="{% static 'assets24/js/build.js' %}"></script>
 </body>
-<script src={% static 'js/index.js' %}></script>
 
 </html>
