@@ -10,22 +10,27 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.utils.timezone import now
 from .forms import RegisterForm
+from django.contrib.auth.models import Group
 
 def register_view(request):
     if request.user.is_authenticated:
-        return redirect('ai_page')
+        return redirect('dashboard')
 
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            
+            # Tambahkan user ke grup "user"
+            user_group, created = Group.objects.get_or_create(name='user')
+            user.groups.add(user_group)
+            
             login(request, user)
-            return redirect('ai_page')
+            return redirect('dashboard')
     else:
         form = RegisterForm()
 
     return render(request, 'register.html', {'form': form})
-
 def user_login(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -35,7 +40,7 @@ def user_login(request):
         if user is not None:
             login(request, user)
             messages.success(request, "Login berhasil!")
-            return redirect("generate_ai")  # Redirect ke halaman setelah login
+            return redirect("dashboard")  # Redirect ke halaman setelah login
         else:
             messages.error(request, "Username atau password salah.")
     
@@ -53,7 +58,13 @@ client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 def dashboard(request):
-    return render(request, 'index.html')
+    group = request.user.groups.first()
+    if group is not None and group.name == 'admin':
+        return render(request, 'admina/dashboard.html')
+    else:
+        return render(request, 'index.html', {
+            'data': 'tasks',
+        })
 def get_trial_limit(request):
     trial_limit = 3  # Maksimal request gratis
     trial_session_key = "ai_trial_count"
